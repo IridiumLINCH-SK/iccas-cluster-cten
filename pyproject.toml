@@ -51,6 +51,6 @@ docs = [
 source = "https://github.com/IridiumLINCH-SK/iccas-cluster-cten"
 
 [tool.setuptools.packages.find]
-include = ["CTEN", "CTEN.*", "baseline_models", "baseline_models.*", "atomic_vectors", "atomic_vectors.*"]
+include = ["CTEN"]
 
 [tool.setuptools_scm]
