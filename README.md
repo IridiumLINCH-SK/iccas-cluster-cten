@@ -42,7 +42,7 @@ Train and validate the model by running `train_val_model.py`, and test its perfo
 "align" means using orbital-level atomic vectors for baseline models.\
 Run `align_desc.py` or `comp_desc.py` for the descriptors.\
 Run `Standardize.py` for standardization.\
-Run `*_pipeline.py` for hyperparameter optimizations and testing.\
+Run `*_pipeline.py` for hyperparameter optimizations and testing.
 
 ### atomic_vectors
 Atomic vectors of different fineness, i.e. single atomic number, periodic table positions, shell, subshell and orbital.
