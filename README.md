@@ -16,7 +16,7 @@ The CTEN model has following requirements:
 To install `iccas-cluster-cten` from wheel, you can download `iccas-cluster-cten` wheel and execute:
 
 ```sh
-pip install {}
+pip install iccas_cluster_cten-1.0.0-py3-none-any.whl
 ```
 
 ### Installation from sources
