@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=64", "setuptools-scm>=8"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "iccas-cluster-cten"
-dynamic = ["version"]
+version = "1.0.0"
 authors = [
     {name = "Ning-Zheng Li"},
     {name = "Zi-Yue Wang"}
@@ -51,6 +51,5 @@ docs = [
 source = "https://github.com/IridiumLINCH-SK/iccas-cluster-cten"
 
 [tool.setuptools.packages.find]
-include = ["CTEN"]
+include = ["CTEN", "CTEN.*"]
 
-[tool.setuptools_scm]
