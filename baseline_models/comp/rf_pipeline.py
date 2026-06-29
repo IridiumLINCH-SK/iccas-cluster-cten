@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import RandomizedSearchCV, PredefinedSplit
-from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.ensemble import RandomForestRegressor
 from scipy.stats import uniform, randint, loguniform
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
@@ -10,18 +10,18 @@ df2 = pd.read_excel("Val_data_for_model_validation.xlsx")
 df3 = pd.read_excel("Test_data_for_model_validation.xlsx")
 
 index_tags = ["cluster"]
-label_tags = ["FEPA"]
+label_tags = ["AEPA"]
 
 X_train = df1.drop(columns=index_tags+label_tags)
-y_train = np.array(df1["FEPA"])
+y_train = np.array(df1["AEPA"])
 X_train = X_train.values
 
 X_val = df2.drop(columns=index_tags+label_tags)
-y_val = np.array(df2["FEPA"])
+y_val = np.array(df2["AEPA"])
 X_val = X_val.values
 
 X_test = df3.drop(columns=index_tags+label_tags)
-y_test = np.array(df3["FEPA"])
+y_test = np.array(df3["AEPA"])
 X_test = X_test.values
 
 X_train_val = np.vstack([X_train, X_val])
@@ -29,23 +29,22 @@ y_train_val = np.concatenate([y_train, y_val])
 test_fold = [-1] * len(X_train) + [0] * len(X_val)
 ps = PredefinedSplit(test_fold)
 
-gbrt = GradientBoostingRegressor()
+rf = RandomForestRegressor()
 param_distributions = {
     'n_estimators': randint(50, 5000),
-    'learning_rate': loguniform(1e-2, 0.3),
-    'max_depth': randint(3, 10),
+    'max_depth': randint(3, 30),
     'min_samples_split': randint(2, 20),
     'min_samples_leaf': randint(1, 20),
 }
 
 random_search = RandomizedSearchCV(
-    estimator=gbrt,
+    estimator=rf,
     param_distributions=param_distributions,
-    n_iter=100,
+    n_iter=50,
     cv=ps,
     scoring='neg_mean_squared_error',
     n_jobs=-1,
-    random_state=41,
+    random_state=42,
     verbose=2,
     return_train_score=True
 )

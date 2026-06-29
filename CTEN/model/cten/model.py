@@ -9,13 +9,10 @@ from typing import Callable, Union
 from sklearn.preprocessing import StandardScaler
 from .data import (
     CTENDataSet,
-    atom_feature_standardize,
-    molecule_prop_process,
     input_data_construct,
     data_set_collate_fn,
 )
 from ..base import *
-from ...loss import CTENLoss
 from ...utils.cten_metric import CTENMETRICS
 
 
@@ -173,9 +170,6 @@ class CTEN(BaseModel):
         atom_table: pd.DataFrame,
         atom_column_name: str,
         cluster_column_name: str,
-#        mole_column_name: str,
-#        mole_table: pd.DataFrame,
-#        mole_table_column_name: str,
         num_heads: int,
         layer_norm_eps: float,
         num_transformer_layers: int,
@@ -185,14 +179,12 @@ class CTEN(BaseModel):
         num_output_features: int = 1,
         freeze_embedding: bool = True,
         extend_embed_vector: bool = True,
-        loss: Union[
-            str, Callable[[torch.Tensor, torch.Tensor], torch.Tensor]
-        ] = "mod_squared_loss",
+        loss=nn.MSELoss(),
         optimizer: optim.Optimizer = optim.Adam,
         device: torch.device = None,
         dtype: torch.dtype = torch.float64,
     ) -> None:
-        super().__init__(CTENLoss(loss), optimizer, device=device, dtype=dtype)
+        super().__init__(loss, optimizer, device=device, dtype=dtype)
         self.num_output_features = num_output_features
         self.num_heads = num_heads
         self.extend_embed_vector = extend_embed_vector
@@ -203,17 +195,11 @@ class CTEN(BaseModel):
         self.transformer_dropout = transformer_dropout
         self.fnn_dropout = fnn_dropout
         self.cluster_column_name = cluster_column_name
-#        self.mole_column_name = mole_column_name
-#        self.mole_table = mole_table
-#        self.mole_table_column_name = mole_table_column_name
         self.freeze_embedding = freeze_embedding
 
-        # Standardize atom feature vectors
-        self.atom_table = atom_feature_standardize(atom_table, atom_column_name)
+        # Load atom_feature table
+        self.atom_table = atom_table
 
-        # Standard scaler of feature vector of molecules involved in the cluster reaction
-#        self.scalers["mole_scaler"] = StandardScaler()
-        # Standard scaler of other relevant features of the reaction
         self.scalers["other_feature_scaler"] = StandardScaler()
         # Standard scaler of number of atoms of the cluster
         self.scalers["num_atoms_scaler"] = StandardScaler()
@@ -238,22 +224,10 @@ class CTEN(BaseModel):
         -------
         tuple
         """
-        # Get cluster part, molecule part, other feature part of the input
+        # Get cluster part, and other feature part of the input
         clusters = X[[self.cluster_column_name]]
-#        molecules = X[[self.mole_column_name]]
-#        other_props = X.drop(columns=[self.cluster_column_name, self.mole_column_name])
         other_props = X.drop(columns=[self.cluster_column_name])
 
-        # Transform chemical formulas of molecules involved in the reaction and standardize
-#        molecules = molecule_prop_process(
-#            molecules, self.mole_table, self.mole_table_column_name
-#        )
-#        if train_set:
-#            self.scalers["mole_scaler"].fit(molecules)
-#        molecules = pd.DataFrame(
-#            self.scalers["mole_scaler"].transform(molecules),
-#            columns=molecules.columns.tolist(),
-#        )
         # Standardize other features
         if not other_props.empty:
             if train_set:
@@ -266,7 +240,6 @@ class CTEN(BaseModel):
         clusters, cluster_num_atoms, global_features = input_data_construct(
             clusters,
             other_props,
-#            molecules,
             self.atom_table,
             self.atom_column_name,
         )
@@ -286,7 +259,6 @@ class CTEN(BaseModel):
         self,
         save_dir: str,
         model_name: str,
-#        mole_scaler_name: str,
         num_atoms_scaler_name: str,
         other_feature_scaler_name: str,
     ):
@@ -299,9 +271,6 @@ class CTEN(BaseModel):
             Directory to save.
         model_name: str
             File name of the model.
-        mole_scaler_name: str
-            File name of the standard scaler of feature vector
-            of molecules involved in the cluster reaction.
         num_atoms_scaler_name: str
             File name of the standard scaler of number of atoms of the cluster.
         other_feature_scaler_name: str
@@ -310,7 +279,6 @@ class CTEN(BaseModel):
         super().save(
             save_dir,
             model_name,
-#            mole_scaler=mole_scaler_name,
             num_atoms_scaler=num_atoms_scaler_name,
             other_feature_scaler=other_feature_scaler_name,
         )
@@ -318,7 +286,6 @@ class CTEN(BaseModel):
     def load(
         self,
         model: str,
-#        mole_scaler: str,
         num_atoms_scaler: str,
         other_feature_scaler: str,
     ):
@@ -329,9 +296,6 @@ class CTEN(BaseModel):
         ----------
         model: str
             File path of the model.
-        mole_scaler: str
-            File path of the standard scaler of feature vector
-            of molecules involved in the cluster reaction.
         num_atoms_scaler: str
             File path of the standard scaler of number of atoms of the cluster.
         other_feature_scaler: str

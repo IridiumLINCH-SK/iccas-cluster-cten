@@ -46,12 +46,12 @@ TM = ['Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn',
 #### Functions end.
 
 #### Load atom and molecular properties.
-ap_df = pd.read_excel("atomprop.xlsx", index_col=0)
+ap_df = pd.read_csv("atomprop.csv", index_col=0)
 #print(list(ap_df.columns))
 #### Atom and molecular properties loaded.
 
 #### Extract info from TRAIN, VAL and TEST.
-old_key_header = ['cluster', 'FEPA']
+old_key_header = ['cluster', 'AEPA']
 f1 = open('train_set.csv', 'r').read().splitlines()
 f2 = open('val_set.csv', 'r').read().splitlines()
 f3 = open('test_set.csv', 'r').read().splitlines()
@@ -70,13 +70,13 @@ g1 = open('train_aligned.csv', 'w')
 g2 = open('val_aligned.csv', 'w')
 g3 = open('test_aligned.csv', 'w')
 
-Title = 'cluster,'
+Title = 'clusters,'
 #for sth in list(mp_df.columns):
 #    Title = Title + sth + ','
 for an in range(1, 9):
     for sth in list(ap_df.columns):
         Title = Title + 'A{}_{},'.format(str(an), sth)
-Title = Title + 'Q,FEPA\n'
+Title = Title + 'Q,AEPA\n'
 
 g1.write(Title)
 g2.write(Title)
@@ -85,7 +85,7 @@ g3.write(Title)
 #### write TRAIN ####
 for idx in range(0, len(df1)):
     clus = df1['cluster'][idx]
-    lgk1 = df1['FEPA'][idx]
+    lgk1 = df1['AEPA'][idx]
     if atom_count(clus) <= 8:
         atom_feat_str = ''
         comp_dict = parse_cluster(clus)
@@ -113,7 +113,7 @@ g1.close()
 
 for idx in range(0, len(df2)):
     clus = df2['cluster'][idx]
-    lgk1 = df2['FEPA'][idx]
+    lgk1 = df2['AEPA'][idx]
     if atom_count(clus) <= 8:
         atom_feat_str = ''
         comp_dict = parse_cluster(clus)
@@ -138,7 +138,7 @@ g2.close()
 
 for idx in range(0, len(df3)):
     clus = df3['cluster'][idx]
-    lgk1 = df3['FEPA'][idx]
+    lgk1 = df3['AEPA'][idx]
     if atom_count(clus) <= 8:
         atom_feat_str = ''
         comp_dict = parse_cluster(clus)

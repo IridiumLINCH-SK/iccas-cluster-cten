@@ -11,7 +11,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import Dataset, DataLoader
 from typing import Callable
-from ...loss import BaseLoss
 
 
 class BaseModel:
@@ -20,8 +19,8 @@ class BaseModel:
 
     Parameters
     ----------
-    loss: BaseLoss
-        Loss function object.
+    loss: 
+        Loss function.
     optimizer: torch.optim.Optimizer
         Pytorch optimizer object.
     module: torch.nn.Module, optional
@@ -34,7 +33,7 @@ class BaseModel:
 
     def __init__(
         self,
-        loss: BaseLoss,
+        loss,
         optimizer: optim.Optimizer,
         module: nn.Module = None,
         device: torch.device = None,

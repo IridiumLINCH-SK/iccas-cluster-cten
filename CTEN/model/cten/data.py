@@ -78,44 +78,9 @@ def data_set_collate_fn(batch: list):
     return atom_inputs, torch.stack(global_inputs), torch.stack(rates)
 
 
-def molecule_prop_process(
-    molecule: pd.DataFrame, mole_table: pd.DataFrame, mole_table_column_name: str
-) -> pd.DataFrame:
-    """
-    Transform chemical formulas of molecules involved in the reaction into feature vectors.
-
-    Parameters
-    ----------
-    molecule: pandas.DataFrame
-        List of chemical formulas of molecules involved in the reaction.
-    mole_table: pandas.DataFrame
-        Feature vector table of molecules.
-    mole_table_column_name: str
-        Column name of chemical formula in the feature vector table.
-
-    Returns
-    -------
-    pandas.DataFrame
-    """
-    mole_features = []
-    # Generate vector for each chemical formula input
-    for i in range(len(molecule)):
-        mole_features.append(
-            mole_table[mole_table[mole_table_column_name] == molecule.iloc[i, 0]]
-            .to_numpy()
-            .tolist()[0]
-        )
-    # Delete chemical formula column and construct DataFrame
-    mole_features = pd.DataFrame(
-        mole_features, columns=mole_table.columns.tolist()
-    ).drop(columns=[mole_table_column_name])
-    return mole_features
-
-
 def input_data_construct(
     clusters: pd.DataFrame,
     other_props: pd.DataFrame,
-#    mole_props: pd.DataFrame,
     atom_props: pd.DataFrame,
     atom_column_name: str,
 ) -> tuple[list[torch.Tensor], pd.DataFrame, pd.DataFrame]:
@@ -168,7 +133,6 @@ def input_data_construct(
         global_features.append(
             [atom_charge_counts[i]["charge"]]
             + other_props.iloc[i].to_numpy().tolist()
-#            + mole_props.iloc[i].to_numpy().tolist()
         )
     return (
         cluster_matrix,
@@ -177,32 +141,7 @@ def input_data_construct(
             global_features,
             columns=["charge"]
             + other_props.columns.tolist()
-#            + mole_props.columns.tolist(),
         ),
     )
 
 
-def atom_feature_standardize(
-    atom_props: pd.DataFrame, atom_column_name: str
-) -> pd.DataFrame:
-    """
-    Standardize atom feature vector table.
-
-    Parameters
-    ----------
-    atom_props: pandas.DataFrame
-        Atom feature vector table.
-    atom_column_name: str
-        Column name of elemental symbol in the atom feature vector table.
-
-    Returns
-    -------
-    pandas.DataFrame
-    """
-    std = sklearn.preprocessing.StandardScaler().fit_transform(
-        atom_props.drop([atom_column_name], axis=1)
-    )
-    std_data = np.column_stack([atom_props[atom_column_name].to_numpy(), std])
-    prop_list = atom_props.columns.to_list()
-    prop_list.remove(atom_column_name)
-    return pd.DataFrame(std_data, columns=[atom_column_name] + prop_list)

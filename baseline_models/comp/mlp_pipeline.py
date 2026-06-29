@@ -15,12 +15,12 @@ df1 = pd.read_excel("Train_data_for_model_validation.xlsx")
 df2 = pd.read_excel("Val_data_for_model_validation.xlsx")
 df3 = pd.read_excel("Test_data_for_model_validation.xlsx")
 
-y_train = df1['FEPA']
-X_train = df1.drop(columns=['cluster', 'FEPA'])
-y_val = df2['FEPA']
-X_val = df2.drop(columns=['cluster', 'FEPA'])
-y_test = df3['FEPA']
-X_test = df3.drop(columns=['cluster', 'FEPA'])
+y_train = df1['AEPA']
+X_train = df1.drop(columns=['cluster', 'AEPA'])
+y_val = df2['AEPA']
+X_val = df2.drop(columns=['cluster', 'AEPA'])
+y_test = df3['AEPA']
+X_test = df3.drop(columns=['cluster', 'AEPA'])
 input_dim = len(X_train.columns)
 
 
@@ -70,7 +70,7 @@ class TorchRegressor(BaseEstimator, RegressorMixin):
         self.lr = lr
         self.epochs = epochs
 
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         self.model_ = None  
 
     def _build_model(self):
@@ -124,17 +124,17 @@ class TorchRegressor(BaseEstimator, RegressorMixin):
 
 
 param_distributions = {
-    'lr': uniform(0.0001, 0.1),
-    'epochs': randint(0, 1600),
+    'lr': uniform(0.002, 0.0022),
+    'epochs': randint(130, 131),
 }
 
 random_search = RandomizedSearchCV(
     estimator=TorchRegressor(),
     param_distributions=param_distributions,
-    n_iter=50,
+    n_iter=1,
     cv=ps,
     scoring='neg_mean_squared_error',
-    n_jobs=1,
+    n_jobs=3,
     random_state=42,
     verbose=2,
     return_train_score=True

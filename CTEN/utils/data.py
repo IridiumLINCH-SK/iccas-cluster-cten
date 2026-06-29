@@ -67,7 +67,7 @@ def analyze_chemical_formula_table(
     formulas: Union[pd.Series, pd.DataFrame],
 ) -> tuple[list[dict], list]:
     """
-    Get atoms and charge of each chemical formula in the `pandas` tabel.
+    Get atoms and charge of each chemical formula in the `pandas` table.
     Return analysis dictionary of each chemical formula and total element types of the data set.
 
     Parameters
@@ -87,82 +87,6 @@ def analyze_chemical_formula_table(
         return analyze_chemical_formula_list(formulas.tolist())
     else:
         raise ValueError("Input must be a pandas DataFrame or Series.")
-
-
-def cluster_atom_distribution(
-    data: pd.DataFrame,
-    cluster_column_name: str,
-    exact_label_name: str,
-    atom_props: pd.DataFrame,
-    atom_column_name: str,
-) -> dict:
-    """
-    Count the distribution of atoms of clusters.
-
-    Parameters
-    ----------
-    data: pandas.DataFrame
-        Data set.
-    cluster_column_name: str
-        Column name of cluster chemical formula in the data set.
-    exact_label_name: str
-        Column name of data label(exact or upper bound) in the data set.
-    atom_props: pandas.DataFrame
-        Atom feature vector table.
-    atom_column_name: str
-        Column name of elemental symbol in the atom feature vector table.
-
-    Returns
-    -------
-    dict
-    """
-    clusters = data[[cluster_column_name]]
-    exact_label = data[[exact_label_name]]
-    atoms = atom_props[[atom_column_name]].to_numpy().ravel().tolist()
-    count = dict.fromkeys(atoms, 0)
-    count["exact"] = 0
-    count["bound"] = 0
-    count["pos_charge"] = 0
-    count["neg_charge"] = 0
-    count["neutral"] = 0
-    # Count element and charge
-    for c in analyze_chemical_formula_table(clusters)[0]:
-        for a in c.keys():
-            if a != "charge":
-                count[a] += 1
-        if c["charge"] == 1:
-            count["pos_charge"] += 1
-        elif c["charge"] == -1:
-            count["neg_charge"] += 1
-        else:
-            count["neutral"] += 1
-    # Count exact data and upper bound data
-    for l in exact_label.to_numpy().ravel():
-        if l == 1:
-            count["exact"] += 1
-        else:
-            count["bound"] += 1
-    return count
-
-
-def rate_distribution(data: pd.DataFrame, column_name: str) -> dict:
-    """
-    Count the distribution of reaction rate.
-
-    Parameters
-    ----------
-    data: pandas.DataFrame
-        Data set.
-    column_name: str
-        Column name of reaction rate in the data set.
-
-    Returns
-    -------
-    dict
-    """
-    yrange = data[[column_name]].astype("int")
-    return yrange.value_counts().to_dict()
-
 
 def data_split(
     data: str,

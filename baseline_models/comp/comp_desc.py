@@ -30,7 +30,7 @@ sets = ['train_set.csv', 'val_set.csv', 'test_set.csv']
 for a_csv in sets:
     Info_lines = open(a_csv).read().splitlines()
     g = open('{}_comp_desc.csv'.format(a_csv.split('_')[0]), 'w')
-    g.write('cluster,Sc,Ti,V,Cr,Mn,Fe,Co,Ni,Cu,Zn,Y,Zr,Nb,Mo,Tc,Ru,Rh,Pd,Ag,Cd,La,Hf,Ta,W,Re,Os,Ir,Pt,Au,Hg,C,N,O,S,Q,FEPA\n')
+    g.write('cluster,Sc,Ti,V,Cr,Mn,Fe,Co,Ni,Cu,Zn,Y,Zr,Nb,Mo,Tc,Ru,Rh,Pd,Ag,Cd,La,Hf,Ta,W,Re,Os,Ir,Pt,Au,Hg,C,N,O,S,Q,AEPA\n')
     for idx in range(1, len(Info_lines)):
         line = Info_lines[idx]
         clus = line.split(',')[0]

@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "iccas-cluster-cten"
+dynamic = ["version"]
+authors = [
+    {name = "Ning-Zheng Li"},
+    {name = "Zi-Yue Wang"}
+]
+maintainers = [{name = "ICCAS Sheng-Gui He Group"}]
+description = "Machine learning models for cluster research (Nature Communications Revision)"
+readme = "README.md"
+keywords = ["chemistry", "cluster", "machine learning"]
+license = {text = "MIT License"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Unix",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scikit-learn",
+    "scipy",
+    "torch",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+test = []
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+
+[project.urls]
+source = "https://github.com/IridiumLINCH-SK/iccas-cluster-cten"
+
+[tool.setuptools.packages.find]
+include = ["CTEN", "CTEN.*", "baseline_models", "baseline_models.*", "atomic_vectors", "atomic_vectors.*"]
+
+[tool.setuptools_scm]
