@@ -47,7 +47,7 @@ def charge(clus):
     else:
         return 0
 def electron(clus):
-    return sum([ANDict[ele] for ele in parse_cluster(clus).keys()]) - charge(clus)
+    return sum([ANDict[ele] * parse_cluster(clus)[ele] for ele in parse_cluster(clus).keys()]) - charge(clus)
 
 def do_round(line):
     clus = line.split(',')[0]
